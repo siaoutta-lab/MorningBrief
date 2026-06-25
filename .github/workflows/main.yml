@@ -24,24 +24,24 @@ jobs:
       run: |
         python reply.py
 
-    # 【新增步骤】自动将生成的早报发送到你的两个邮箱
+    # 【修复重点：将发件服务器完美切换为 Gmail 官方引擎】
     - name: Send MorningBrief Email
       uses: dawidd6/action-send-mail@v3
       with:
-        # 这里配置发件服务器（以 QQ 邮箱为例，如果是网易改成 smtp.163.com，Gmail 改成 smtp.gmail.com）
-        server_address: smtp.qq.com
+        # 正确配置 Gmail 发件服务器
+        server_address: smtp.gmail.com
         server_port: 465
-        # 发件人用户名（从密码箱读取）
+        # 自动读取你在 Secrets 存好的 Gmail 账号
         username: ${{ secrets.MAIL_USERNAME }}
-        # 发件人密码/授权码（从密码箱读取）
+        # 自动读取你在 Secrets 存好的 16 位 Google 应用专用密码 (neka fbas eszo xtxw)
         password: ${{ secrets.MAIL_PASSWORD }}
-        # 邮件主题
+        # 邮件标题
         subject: 📊 MorningBrief | SEA Edition (Latest)
-        # 收件人列表：你的两个邮箱，用逗号隔开
+        # 同时发送到你的两个目标邮箱
         to: caisihao@asp.th.com,siaoutta@gmail.com
         # 发件人尊称
-        from: AI News Editor
-        # 邮件内容：直接读取 Python 生成的那个文本文件
+        from: AI News Editor <${{ secrets.MAIL_USERNAME }}>
+        # 读取早报文本内容发送
         body: file://brief_output.txt
-        # 强制支持中文不乱码
+        # 确保中文排版不乱码
         convert_markdown: true

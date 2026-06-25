@@ -2,23 +2,46 @@ name: MorningBrief
 
 on:
   schedule:
-    - cron: '0 23 * * *'  # 每天曼谷/北京时间早上 6 点自动运行
-  workflow_dispatch:      # 允许随时手动点击触发
+    - cron: '0 23 * * *' # 每天曼谷/北京时间早上 6:00 自动运行
+  workflow_dispatch: # 允许手动点击按钮触发
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+    - name: Checkout repo
+      uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Run MorningBrief Script
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python reply.py
+    - name: Run MorningBrief Script
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        python reply.py
+
+    # 【新增步骤】自动将生成的早报发送到你的两个邮箱
+    - name: Send MorningBrief Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        # 这里配置发件服务器（以 QQ 邮箱为例，如果是网易改成 smtp.163.com，Gmail 改成 smtp.gmail.com）
+        server_address: smtp.qq.com
+        server_port: 465
+        # 发件人用户名（从密码箱读取）
+        username: ${{ secrets.MAIL_USERNAME }}
+        # 发件人密码/授权码（从密码箱读取）
+        password: ${{ secrets.MAIL_PASSWORD }}
+        # 邮件主题
+        subject: 📊 MorningBrief | SEA Edition (Latest)
+        # 收件人列表：你的两个邮箱，用逗号隔开
+        to: caisihao@asp.th.com,siaoutta@gmail.com
+        # 发件人尊称
+        from: AI News Editor
+        # 邮件内容：直接读取 Python 生成的那个文本文件
+        body: file://brief_output.txt
+        # 强制支持中文不乱码
+        convert_markdown: true

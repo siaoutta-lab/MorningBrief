@@ -24,24 +24,17 @@ jobs:
       run: |
         python reply.py
 
-    # 【修复重点：将发件服务器完美切换为 Gmail 官方引擎】
+    # 【已成功新增收件人】
     - name: Send MorningBrief Email
       uses: dawidd6/action-send-mail@v3
       with:
-        # 正确配置 Gmail 发件服务器
         server_address: smtp.gmail.com
         server_port: 465
-        # 自动读取你在 Secrets 存好的 Gmail 账号
         username: ${{ secrets.MAIL_USERNAME }}
-        # 自动读取你在 Secrets 存好的 16 位 Google 应用专用密码 (neka fbas eszo xtxw)
         password: ${{ secrets.MAIL_PASSWORD }}
-        # 邮件标题
         subject: 📊 MorningBrief | SEA Edition (Latest)
-        # 同时发送到你的两个目标邮箱
-        to: caisihao@asp.th.com,siaoutta@gmail.com
-        # 发件人尊称
+        # 这里已经并列配置了你的三个目标收件箱
+        to: caisihao@asp.th.com,siaoutta@gmail.com,267247961@qq.com
         from: AI News Editor <${{ secrets.MAIL_USERNAME }}>
-        # 读取早报文本内容发送
         body: file://brief_output.txt
-        # 确保中文排版不乱码
         convert_markdown: true

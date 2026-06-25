@@ -26,8 +26,8 @@ def get_morning_brief():
         'Content-Type': 'application/json'
     }
     
-    # 【已修正】这里更换成了最新、最稳定的 v1beta 专属模型路径
-    url = f"/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}"
+    # 【已修正】这里更换成了官方最标准的纯净版模型路径，去掉了后面的所有后缀
+    url = f"/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
     conn.request("POST", url, payload, headers)
     
     res = conn.getresponse()
@@ -36,6 +36,12 @@ def get_morning_brief():
     # 5. 解析并打印结果
     try:
         result = json.loads(data.decode("utf-8"))
+        
+        # 如果依然报错，直接打印完整的错误响应，方便定位
+        if "error" in result:
+            print("API 返回了错误:", result["error"]["message"])
+            return
+            
         brief_text = result['candidates'][0]['content']['parts'][0]['text']
         print("\n" + "="*20 + " MorningBrief " + "="*20)
         print(brief_text)

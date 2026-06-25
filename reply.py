@@ -12,11 +12,80 @@ def get_morning_brief():
     # 2. 建立连接
     conn = http.client.HTTPSConnection("generativelanguage.googleapis.com")
     
-    # 3. 构造请求内容
+    # 3. 构造高度定制的 Prompt 提示词
+    prompt_text = (
+        "请作为一名深耕东南亚及全球市场的专业新闻主编，利用你最新的联网搜索能力，"
+        "搜集过去24小时全球与东盟最核心的动态。严格按照以下要求的结构、标题和【中英文对照】格式生成一份《MorningBrief | SEA Edition》。\n\n"
+        "【严格排版要求】：\n"
+        "1. 必须包含以下 1 至 7 的所有板块，板块名称和副标题必须与模板完全一致。\n"
+        "2. 所有新闻详情、分析、洞察，必须采用【一句英文、一句中文】的逐句对照格式。\n"
+        "3. 明确写出信息来源（Source 来源）。\n"
+        "4. 'Executive Insight 今日洞察' 和 'One-Line Takeaway 一句话总结' 必须强烈偏向金融科技（FinTech）、资本流动和基础设施投资视角。\n\n"
+        "【输出模板如下】：\n"
+        "MorningBrief | SEA Edition\n"
+        "[当前日期，如 25 Jun 2026] | Bangkok Time\n"
+        "Global Events • Markets • FinTech • Technology • Energy • ASEAN\n\n"
+        "1. Top Stories\n"
+        "全球重大事件\n"
+        "[国旗] [英文新闻标题]\n"
+        "[中文新闻标题]\n"
+        "[英文详情描述]\n"
+        "[中文详情描述]\n"
+        "Why it matters | 为什么重要\n"
+        "[英文逻辑推导，每行一句]\n"
+        "[中文逻辑推导，每行一句]\n"
+        "Source 来源\n"
+        "[媒体名称]\n\n"
+        "2. Markets\n"
+        "资本市场\n"
+        "Market Theme\n"
+        "今日市场主线\n"
+        "[中英文对照的市场核心板块主线]\n"
+        "What Investors Are Avoiding\n"
+        "资金相对回避\n"
+        "[中英文对照的回避板块]\n"
+        "Source 来源\n"
+        "[媒体名称]\n\n"
+        "3. FinTech\n"
+        "金融科技\n"
+        "[中英文对照的最新FinTech动态、跨境支付或稳定币进展]\n"
+        "Source 来源\n"
+        "[媒体名称]\n\n"
+        "4. Technology\n"
+        "科技\n"
+        "[中英文对照的AI、半导体基础设施故事]\n"
+        "Source 来源\n"
+        "[媒体名称]\n\n"
+        "5. Energy & Infrastructure\n"
+        "能源与基础设施\n"
+        "[中英文对照的电力、电网、数据中心配套能源趋势]\n"
+        "Source 来源\n"
+        "[媒体名称]\n\n"
+        "6. Thailand & ASEAN\n"
+        "泰国与东盟\n"
+        "[中英文对照的泰国数据中心投资、Direct PPA政策及对工业建筑/EMS的意义]\n"
+        "Source 来源\n"
+        "[媒体名称]\n\n"
+        "7. Investment Watchlist\n"
+        "投资观察\n"
+        "Macro 宏观 / Technology 科技 / Energy 能源 / Thailand 泰国\n\n"
+        "Executive Insight\n"
+        "今日洞察\n"
+        "English\n"
+        "[英文洞察，侧重FinTech/基础设施落地落地价值]\n"
+        "中文\n"
+        "[中文洞察]\n\n"
+        "Source Summary\n"
+        "今日信源统计\n\n"
+        "One-Line Takeaway\n"
+        "一句话总结\n"
+        "[中英文对照的FinTech与资本流向总结]"
+    )
+
     payload = json.dumps({
         "contents": [{
             "parts": [{
-                "text": "请作为一名专业的新闻主编，利用你最新的联网搜索能力，搜集过去24小时全球最核心的科技、AI与财经动态。为我生成一份精致的《MorningBrief 晨间简报》。要求：1. 使用中文；2. 包含 3-5 条核心新闻；3. 每条新闻提供简短摘要，并附带可能的新闻线索或参考来源说明；4. 排版清晰、具备可读性。"
+                "text": prompt_text
             }]
         }],
         "tools": [{"google_search": {}}]
@@ -26,7 +95,6 @@ def get_morning_brief():
         'Content-Type': 'application/json'
     }
     
-    # 【终极修正】使用全新且支持 v1beta 联网的 gemini-2.5-flash 模型
     url = f"/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     conn.request("POST", url, payload, headers)
     
@@ -54,4 +122,4 @@ def get_morning_brief():
         print("原始返回数据:", data.decode("utf-8"))
 
 if __name__ == "__main__":
-    get_morning_brief()
+    get_morning_brief():

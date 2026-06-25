@@ -14,7 +14,10 @@ def get_morning_brief():
             "parts": [{
                 "text": (
                     "请作为一名深耕东南亚及全球市场的专业新闻主编与资深金融科技评论员，利用你最新的联网搜索能力，"
-                    "搜集过去24小时全球与东盟最核心的动态。严格按照以下要求的结构、标题和【逐句中英文对照】格式生成一份《MorningBrief | SEA Edition》。\n\n"
+                    "搜集过去24小时全球与东盟最核心的动态。\n\n"
+                    "【新增核心权威信源】：\n"
+                    "在检索和生成内容时，请务必重点参考并引入来自 麦肯锡 (McKinsey & Company)、BBC、CNN 以及 金融时报 (Financial Times / FT) 的最新报告、权威报道与核心财经评论。\n\n"
+                    "严格按照以下要求的结构、标题和【逐句中英文对照】格式生成一份《MorningBrief | SEA Edition》。\n\n"
                     "【核心内容偏向】：\n"
                     "你的报道和分析必须具备强烈的 FinTech（金融科技）直觉，高度关注资本流动、数字结算基础设施、稳定币跨境应用、AI基础设施投资的ROI、以及东南亚科技出海的资金链动态。\n\n"
                     "【严格排版要求】：\n"
@@ -92,7 +95,6 @@ def get_morning_brief():
     headers = {'Content-Type': 'application/json'}
     url = f"/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     
-    # 核心升级：增加3次自动重试机制
     for attempt in range(1, 4):
         print(f"正在尝试请求 Gemini API (第 {attempt} 次)...")
         try:
@@ -113,7 +115,6 @@ def get_morning_brief():
             
             brief_text = result['candidates'][0]['content']['parts'][0]['text']
             
-            # 成功拿到数据，写入文件
             with open("brief_output.txt", "w", encoding="utf-8") as f:
                 f.write(brief_text)
             print("早报生成成功，文件已写入 brief_output.txt")
@@ -125,7 +126,6 @@ def get_morning_brief():
                 print("等待 5 秒后尝试下一次重试...")
                 time.sleep(5)
             else:
-                # 如果试了3次都失败，强制写入一个错误说明文件，确保发邮件步骤不崩溃
                 error_fallback = f"抱歉，今早由于 Gemini 服务器异常拥堵，未能成功抓取到新闻。具体错误原因: {e}"
                 with open("brief_output.txt", "w", encoding="utf-8") as f:
                     f.write(error_fallback)

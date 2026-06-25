@@ -99,8 +99,8 @@ def get_morning_brief():
         'Content-Type': 'application/json'
     }
     
-    # 【避堵修正】切换到高阶、且相对不拥堵的 gemini-2.5-pro 模型
-    url = f"/v1beta/models/gemini-2.5-pro:generateContent?key={api_key}"
+    # 使用 100% 具备联网配额且免费的稳定版模型
+    url = f"/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     conn.request("POST", url, payload, headers)
     
     res = conn.getresponse()

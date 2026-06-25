@@ -18,15 +18,16 @@ def get_morning_brief():
             "parts": [{
                 "text": "请作为一名专业的新闻主编，利用你最新的联网搜索能力，搜集过去24小时全球最核心的科技、AI与财经动态。为我生成一份精致的《MorningBrief 晨间简报》。要求：1. 使用中文；2. 包含 3-5 条核心新闻；3. 每条新闻提供简短摘要，并附带可能的新闻线索或参考来源说明；4. 排版清晰、具备可读性。"
             }]
-        }]
+        }],
+        "tools": [{"google_search": {}}]
     })
     
     headers = {
         'Content-Type': 'application/json'
     }
     
-    # 【核心修正】切换到最稳固的 v1 正式版接口与基础模型
-    url = f"/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # 【终极修正】使用全新且支持 v1beta 联网的 gemini-2.5-flash 模型
+    url = f"/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     conn.request("POST", url, payload, headers)
     
     res = conn.getresponse()

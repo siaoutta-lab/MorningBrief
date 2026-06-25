@@ -2,7 +2,8 @@ name: MorningBrief
 
 on:
   schedule:
-    - cron: '0 23 * * *' # 每天曼谷/北京时间早上 6:00 自动运行
+    # 0 2 代表世界标准时间（UTC）的 02:00，正好对应曼谷/北京时间的早上 09:00
+    - cron: '0 2 * * *' 
   workflow_dispatch: # 允许手动点击按钮触发
 
 jobs:
@@ -24,7 +25,7 @@ jobs:
       run: |
         python reply.py
 
-    # 【已成功新增收件人】
+    # 【发件引擎：Gmail | 收件人：3位】
     - name: Send MorningBrief Email
       uses: dawidd6/action-send-mail@v3
       with:
@@ -33,7 +34,7 @@ jobs:
         username: ${{ secrets.MAIL_USERNAME }}
         password: ${{ secrets.MAIL_PASSWORD }}
         subject: 📊 MorningBrief | SEA Edition (Latest)
-        # 这里已经并列配置了你的三个目标收件箱
+        # 已完美并列配置你的三个目标收件箱
         to: caisihao@asp.th.com,siaoutta@gmail.com,267247961@qq.com
         from: AI News Editor <${{ secrets.MAIL_USERNAME }}>
         body: file://brief_output.txt

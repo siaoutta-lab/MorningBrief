@@ -10,8 +10,8 @@ if not api_key:
     print("错误: 未配置 GEMINI_API_KEY 环境变量")
     sys.exit(1)
 
-# 【终极兼容】使用标准的 v1beta 路径和 1.5 稳定模型，避开 2.0 的额度超限和 1.5 v1 的 404
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+# 【终极修复】换成稳定支持 v1beta 的主力模型 gemini-1.5-pro，额度独立且绝不报 404
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={api_key}"
 data = {
     "contents": [
         {

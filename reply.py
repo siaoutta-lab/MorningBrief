@@ -1,70 +1,40 @@
-payload = json.dumps({"contents": [{"parts": [{"text": (
-    "请作为一名深耕东南亚及全球市场的专业新闻主编与资深金融科技评论员，利用你最新的联网搜索能力，"
-    "搜集过去24小时全球、东盟以及泰国的最核心动态。\n\n"
-    "【新增核心权威信源】：\n"
-    "在检索和生成泰国与东盟内容时，请务必重点参考并引入来自 The Nation (泰国民族报)、Bangkok Post (曼谷邮报)、"
-    "Thai Enquirer 以及 Khaosod English 的最新报道与核心评论。全球动态部分可参考麦肯锡、BBC、FT等。\n\n"
-    "【核心内容偏向】：\n"
-    "你的报道和分析必须具备强烈的 FinTech（金融科技）直觉，高度关注资本流动、数字结算基础设施、稳定币跨境应用、AI基础设施投资、以及东南亚科技出海的资金链动态。\n\n"
-    "【严格排版要求】：\n"
-    "1. 必须严格按照以下要求的结构、标题和【逐句中英文对照】格式生成。板块名称和副标题必须与模板完全一致。\n"
-    "2. 所有新闻详情、分析、洞察，必须采用【一句英文、一句中文】的逐句对照格式。\n"
-    "3. 明确写出每一项的具体信息来源（Source 来源）。\n"
-    "4. 必须使用 Markdown 语法：对所有板块标题（如 **1. International Dynamic | 国际动态**）、分类标题（如 **📈 Economy & Finance | 经济与金融**）和 **🔍 Source 来源** 进行加粗处理，并在主要大板块之间使用 `---` 进行分割，以确保邮件阅读体验清晰不累。\n\n"
-    "【输出模板结构】：\n"
-    "# 🌅 MorningBrief | SEA Edition\n"
-    "*[当前日期] | Bangkok Time*\n"
-    "*Global Events • ASEAN • Thailand Deep-Dive*\n\n"
-    "---\n\n"
-    "## **1. International Dynamic | 国际动态**\n\n"
-    "**📈 Economy & Finance | 经济与金融**\n"
-    "[中英文逐句对照事件详情]\n\n"
-    "**⚖️ Politics & Energy | 政治与能源**\n"
-    "[中英文逐句对照事件详情]\n\n"
-    "**💻 Technology & Society | 科技与民生**\n"
-    "[中英文逐句对照事件详情]\n\n"
-    "**🔍 Source 来源**\n"
-    "[具体信源名称]\n\n"
-    "---\n\n"
-    "## **2. ASEAN Focus | 东南亚聚焦**\n\n"
-    "**📈 Economy & Finance | 经济与金融**\n"
-    "[中英文逐句对照事件详情]\n\n"
-    "**⚖️ Politics & Energy | 政治与能源**\n"
-    "[中英文逐句对照事件详情]\n\n"
-    "**💻 Technology & Society | 科技与民生**\n"
-    "[中英文逐句对照事件详情]\n\n"
-    "**🔍 Source 来源**\n"
-    "[具体信源名称]\n\n"
-    "---\n\n"
-    "## **3. Thailand Deep-Dive | 泰国专栏**\n\n"
-    "**📊 Economy | 经济**\n"
-    "[中英文逐句对照具体事件]\n\n"
-    "**🏛️ Politics | 政治**\n"
-    "[中英文逐句对照具体事件]\n\n"
-    "**⚡ Energy | 能源**\n"
-    "[中英文逐句对照具体事件]\n\n"
-    "**🚀 Technology | 科技**\n"
-    "[中英文逐句对照具体事件]\n\n"
-    "**💰 Finance | 金融**\n"
-    "[中英文逐句对照具体事件]\n\n"
-    "**👥 People's Livelihood | 民生**\n"
-    "[中英文逐句对照具体事件]\n\n"
-    "**🔍 Source 来源**\n"
-    "[列出具体的泰国媒体来源，如 Bangkok Post, The Nation 等]\n\n"
-    "---\n\n"
-    "## **4. Investment Watchlist | 投资观察**\n"
-    "Macro 宏观 / Technology 科技 / Energy 能源 / Thailand 泰国\n\n"
-    "---\n\n"
-    "## **💡 Executive Insight | 今日洞察**\n\n"
-    "**English**\n"
-    "[英文洞察]\n\n"
-    "**中文**\n"
-    "[中文洞察]\n\n"
-    "---\n\n"
-    "## **📊 Source Summary | 今日信源统计**\n"
-    "[列出所用信源表格]\n\n"
-    "---\n\n"
-    "## **🎯 One-Line Takeaway | 一句话总结**\n"
-    "*[英文总结]*\n"
-    "*[中文总结]*"
-) }] }], "tools": [{"google_search": {}}] })
+import os
+import sys
+import json
+import requests
+
+# 从环境变量中获取 API Key
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    print("错误: 未配置 GEMINI_API_KEY 环境变量")
+    sys.exit(1)
+
+# 构建请求的 URL 和 Payload
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+headers = {"Content-Type": "application/json"}
+payload = {
+    "contents": [
+        {
+            "parts": [
+                {"text": "请帮我生成一份今天的早报简报，包含科技、财经和时事热点。"}
+            ]
+        }
+    ]
+}
+
+try:
+    # 发送 POST 请求
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+    
+    # 解析并打印返回的文本
+    result = response.json()
+    reply_text = result["candidates"][0]["content"]["parts"][0]["text"]
+    print("Gemini 回复内容：")
+    print(reply_text)
+    
+except Exception as e:
+    print(f"请求失败: {e}")
+    if 'response' in locals() and response.text:
+        print(f"错误详情: {response.text}")
+    sys.exit(1)

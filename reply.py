@@ -10,8 +10,8 @@ if not api_key:
     print("错误: 未配置 GEMINI_API_KEY 环境变量")
     sys.exit(1)
 
-# 【终极修复】使用目前最兼容的 2.0 稳定版模型路径
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+# 【绕过额度限制】换成 1.5 模型，它拥有完全独立的每日免费额度
+url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
 data = {
     "contents": [
         {

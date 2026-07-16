@@ -10,8 +10,8 @@ if not api_key:
     print("错误: 未配置 GEMINI_API_KEY 环境变量")
     sys.exit(1)
 
-# 构建请求的 URL 和 Payload
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+# 【已修复】更换为最新推荐的 gemini-2.0-flash 模型
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
 data = {
     "contents": [
         {

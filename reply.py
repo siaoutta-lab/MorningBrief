@@ -10,8 +10,8 @@ if not api_key:
     print("错误: 未配置 GEMINI_API_KEY 环境变量")
     sys.exit(1)
 
-# 更换为当前稳定支持 v1beta 的新一代主力模型 gemini-2.5-flash
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+# 更换为当前兼容性最好且稳定支持 v1beta 的主力模型 gemini-2.0-flash
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
 
 data = {
     "contents": [

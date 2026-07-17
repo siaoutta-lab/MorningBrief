@@ -8,8 +8,8 @@ def get_morning_brief():
         print("错误: 未配置有效的 GEMINI_API_KEY")
         return None
 
-    # 换回通用且最稳定的请求路径，把密钥放在 headers 里或者作为 query 参数传递
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # 使用 2026 最新标准路径与 gemini-2.5-flash 模型
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     
     headers = {
         "Content-Type": "application/json"
@@ -24,12 +24,11 @@ def get_morning_brief():
     }
 
     try:
-        print("正在尝试请求 Gemini API...")
+        print("正在尝试请求最新的 Gemini 2.5 接口...")
         response = requests.post(url, headers=headers, json=data)
         
         if response.status_code == 200:
             result = response.json()
-            # 兼容处理返回的文本解析
             try:
                 brief_text = result['candidates'][0]['content']['parts'][0]['text']
                 print("早报生成成功！")

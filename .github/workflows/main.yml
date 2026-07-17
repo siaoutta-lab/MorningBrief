@@ -20,5 +20,6 @@ jobs:
 
       - name: Run MorningBrief Script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 这一步是关键：把免费额度传给你的代码
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python reply.py

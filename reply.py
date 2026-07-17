@@ -1,50 +1,51 @@
 import os
-import sys
+import requests
 import json
-import urllib.request
-import urllib.error
 
-# 读取你刚刚在 GitHub Settings 里存的 Key
-api_key = os.environ.get("GEMINI_API_KEY")
-if not api_key:
-    print("错误: 未配置有效的 API Key")
-    sys.exit(1)
+def get_morning_brief():
+    # 从系统变量获取你刚刚填写的最新 Key
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("错误: 未配置有效的 GEMINI_API_KEY")
+        return None
 
-# 使用硅基流动的免费大模型接口
-url = "https://api.siliconflow.cn/v1/chat/completions"
+    # 升级为最新的 v1beta 接口，完美兼容 AQ. 开头的新版 Key
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    # 构造请求内容
+    data = {
+        "contents": [{
+            "parts": [{
+                "text": "请帮我生成一份今天的科技与AI行业早报，包含3-5条核心新闻简述，语言要精炼。"
+            }]
+        }]
+    }
 
-data = {
-    "model": "Qwen/Qwen2.5-7B-Instruct", # 完全免费且极聪明的语言模型
-    "messages": [
-        {
-            "role": "user",
-            "content": "请帮我生成一份今天的早报简报，包含科技、财经和时事热点。"
-        }
-    ]
-}
-
-# 转换数据并设置 Headers
-encoded_data = json.dumps(data).encode("utf-8")
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {api_key}"
-}
-
-req = urllib.request.Request(url, data=encoded_data, headers=headers, method="POST")
-
-try:
-    with urllib.request.urlopen(req) as response:
-        response_body = response.read().decode("utf-8")
-        result = json.loads(response_body)
+    try:
+        print("正在尝试使用新接口请求 Gemini API...")
+        response = requests.post(url, headers=headers, json=data)
         
-        reply_text = result["choices"][0]["message"]["content"]
-        print("AI 早报回复内容：")
-        print(reply_text)
-        
-except urllib.error.HTTPError as e:
-    print(f"HTTP 请求失败，状态码: {e.code}")
-    print(f"错误详情: {e.read().decode('utf-8')}")
-    sys.exit(1)
-except Exception as e:
-    print(f"发生其他错误: {e}")
-    sys.exit(1)
+        if response.status_code == 200:
+            result = response.json()
+            # 解析生成的文本内容
+            brief_text = result['candidates'][0]['content']['parts'][0]['text']
+            print("早报生成成功！")
+            return brief_text
+        else:
+            print(f"HTTP 请求失败，状态码: {response.status_code}")
+            print(f"错误详情: {response.text}")
+            return None
+    except Exception as e:
+        print(f"请求发生异常: {e}")
+        return None
+
+if __name__ == "__main__":
+    brief = get_morning_brief()
+    if brief:
+        # 将生成的早报写入临时文件，供后续步骤读取（例如发邮件或保存）
+        with open("brief.txt", "w", encoding="utf-8") as f:
+            f.write(brief)

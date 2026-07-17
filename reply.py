@@ -8,8 +8,8 @@ def get_morning_brief():
         print("错误: 未配置有效的 GEMINI_API_KEY")
         return None
 
-    # 2026 官方最标准的 v1beta 路径与最新免费主力模型 gemini-2.5-flash
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    # 改用绝对通用的 2.0 免费主力模型
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
     
     headers = {
         "Content-Type": "application/json"
@@ -24,7 +24,7 @@ def get_morning_brief():
     }
 
     try:
-        print("正在尝试请求最新的 Gemini 2.5 Flash 接口...")
+        print("正在尝试请求通用的 Gemini 2.0 Flash 接口...")
         response = requests.post(url, headers=headers, json=data)
         
         if response.status_code == 200:

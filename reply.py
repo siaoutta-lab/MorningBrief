@@ -10,8 +10,9 @@ if not api_key:
     print("错误: 未配置 GEMINI_API_KEY 环境变量")
     sys.exit(1)
 
-# 【终极修复】换成稳定支持 v1beta 的主力模型 gemini-1.5-pro，额度独立且绝不报 404
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={api_key}"
+# 更换为当前稳定支持 v1beta 的新一代主力模型 gemini-2.5-flash
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+
 data = {
     "contents": [
         {
@@ -25,6 +26,7 @@ data = {
 # 将数据转换为字节流，并设置 Header
 encoded_data = json.dumps(data).encode("utf-8")
 headers = {"Content-Type": "application/json"}
+
 req = urllib.request.Request(url, data=encoded_data, headers=headers, method="POST")
 
 try:
@@ -37,7 +39,7 @@ try:
         reply_text = result["candidates"][0]["content"]["parts"][0]["text"]
         print("Gemini 回复内容：")
         print(reply_text)
-
+        
 except urllib.error.HTTPError as e:
     print(f"HTTP 请求失败，状态码: {e.code}")
     print(f"错误详情: {e.read().decode('utf-8')}")

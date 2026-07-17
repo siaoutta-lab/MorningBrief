@@ -1,16 +1,18 @@
-name: Run Morning Brief
+name: MorningBrief
 
 on:
-  workflow_dispatch: # 允许手动触发
   schedule:
-    - cron: '0 0 * * *' # 每天定时运行
+    # 5 22 代表世界标准时间（UTC）的 22:05
+    # 正好对应北京/曼谷时间的早上 06:05（避开整点高峰，发送更准时）
+    - cron: '5 22 * * *'
+  workflow_dispatch: # 允许手动点击按钮触发
 
 jobs:
-  run-script:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -18,12 +20,23 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
-        run: pip install requests # 新加这行，专门安装它缺少的工具包
-
       - name: Run MorningBrief Script
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python reply.py
+        run: |
+          python reply.py
+
+      # 【发件引擎：Gmail | 收件人：3位】
+      - name: Send MorningBrief Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: 📊 MorningBrief | SEA Edition (Latest)
+          # 已完美并列配置你的三个目标收件箱
+          to: caisihao@asp.th.com,siaoutta@gmail.com,267247961@qq.com
+          from: AI News Editor <${{ secrets.MAIL_USERNAME }}>
+          body: file://brief_output.txt
+          convert_markdown: true

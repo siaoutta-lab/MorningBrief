@@ -8,8 +8,8 @@ def get_morning_brief():
         print("错误: 未配置有效的 GEMINI_API_KEY")
         return None
 
-    # 路径改为 v1 正式版接口，全面兼容新版 AQ. 密钥与模型名
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # 换回通用且最稳定的请求路径，把密钥放在 headers 里或者作为 query 参数传递
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
     
     headers = {
         "Content-Type": "application/json"
@@ -24,14 +24,20 @@ def get_morning_brief():
     }
 
     try:
-        print("正在尝试使用 v1 正式版接口请求 Gemini API...")
+        print("正在尝试请求 Gemini API...")
         response = requests.post(url, headers=headers, json=data)
         
         if response.status_code == 200:
             result = response.json()
-            brief_text = result['candidates'][0]['content']['parts'][0]['text']
-            print("早报生成成功！")
-            return brief_text
+            # 兼容处理返回的文本解析
+            try:
+                brief_text = result['candidates'][0]['content']['parts'][0]['text']
+                print("早报生成成功！")
+                return brief_text
+            except Exception as parse_err:
+                print(f"解析响应内容失败: {parse_err}")
+                print(f"收到的完整响应: {result}")
+                return None
         else:
             print(f"HTTP 请求失败，状态码: {response.status_code}")
             print(f"错误详情: {response.text}")

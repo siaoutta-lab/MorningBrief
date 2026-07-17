@@ -4,21 +4,17 @@ import json
 import urllib.request
 import urllib.error
 
-# 直接读取 GitHub Actions 自带的系统 Token，不需要你手动去加 Secrets 了！
-api_key = os.environ.get("GITHUB_TOKEN")
+# 读取你刚刚在 GitHub Settings 里存的 Key
+api_key = os.environ.get("GEMINI_API_KEY")
 if not api_key:
-    # 兼容备用：如果你在本地测，或者配了别的名字
-    api_key = os.environ.get("GEMINI_API_KEY")
-
-if not api_key:
-    print("错误: 未配置有效的 Token")
+    print("错误: 未配置有效的 API Key")
     sys.exit(1)
 
-# 使用 GitHub 官方免费提供给开发者的 API 终点（完全免费，且绝不封禁 Actions IP）
-url = "https://models.inference.ai.azure.com/chat/completions"
+# 使用硅基流动的免费大模型接口
+url = "https://api.siliconflow.cn/v1/chat/completions"
 
 data = {
-    "model": "gpt-4o-mini", # 使用性能优异且完全免费的 gpt-4o-mini
+    "model": "Qwen/Qwen2.5-7B-Instruct", # 完全免费且极聪明的语言模型
     "messages": [
         {
             "role": "user",
@@ -27,23 +23,20 @@ data = {
     ]
 }
 
-# 将数据转换为字节流，并设置 Header（注意：GitHub Models 要求必须带 User-Agent）
+# 转换数据并设置 Headers
 encoded_data = json.dumps(data).encode("utf-8")
 headers = {
     "Content-Type": "application/json",
-    "Authorization": f"Bearer {api_key}",
-    "User-Agent": "GitHub-Actions-Script"
+    "Authorization": f"Bearer {api_key}"
 }
 
 req = urllib.request.Request(url, data=encoded_data, headers=headers, method="POST")
 
 try:
-    # 发送请求
     with urllib.request.urlopen(req) as response:
         response_body = response.read().decode("utf-8")
         result = json.loads(response_body)
         
-        # 解析并打印返回的文本
         reply_text = result["choices"][0]["message"]["content"]
         print("AI 早报回复内容：")
         print(reply_text)

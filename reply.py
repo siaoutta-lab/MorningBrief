@@ -3,20 +3,18 @@ import requests
 import json
 
 def get_morning_brief():
-    # 从系统变量获取你刚刚填写的最新 Key
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         print("错误: 未配置有效的 GEMINI_API_KEY")
         return None
 
-    # 升级为最新的 v1beta 接口，完美兼容 AQ. 开头的新版 Key
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # 路径改为 v1 正式版接口，全面兼容新版 AQ. 密钥与模型名
+    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
     
     headers = {
         "Content-Type": "application/json"
     }
     
-    # 构造请求内容
     data = {
         "contents": [{
             "parts": [{
@@ -26,12 +24,11 @@ def get_morning_brief():
     }
 
     try:
-        print("正在尝试使用新接口请求 Gemini API...")
+        print("正在尝试使用 v1 正式版接口请求 Gemini API...")
         response = requests.post(url, headers=headers, json=data)
         
         if response.status_code == 200:
             result = response.json()
-            # 解析生成的文本内容
             brief_text = result['candidates'][0]['content']['parts'][0]['text']
             print("早报生成成功！")
             return brief_text
@@ -46,6 +43,5 @@ def get_morning_brief():
 if __name__ == "__main__":
     brief = get_morning_brief()
     if brief:
-        # 将生成的早报写入临时文件，供后续步骤读取（例如发邮件或保存）
         with open("brief.txt", "w", encoding="utf-8") as f:
             f.write(brief)

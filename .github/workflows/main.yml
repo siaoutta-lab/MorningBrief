@@ -20,5 +20,6 @@ jobs:
 
       - name: Run MorningBrief Script
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # 核心：这里会把你的密钥传递给代码
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 借用 GitHub 的免费 AI 额度
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # 保留备用
         run: python reply.py

@@ -18,6 +18,9 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Install Dependencies
+        run: pip install requests # 新加这行，专门安装它缺少的工具包
+
       - name: Run MorningBrief Script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

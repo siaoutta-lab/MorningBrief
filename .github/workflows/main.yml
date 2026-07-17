@@ -3,7 +3,7 @@ name: Run Morning Brief
 on:
   workflow_dispatch: # 允许手动触发
   schedule:
-    - cron: '0 0 * * *' # 每天定时运行（可根据需要修改）
+    - cron: '0 0 * * *' # 每天定时运行
 
 jobs:
   run-script:
@@ -20,6 +20,5 @@ jobs:
 
       - name: Run MorningBrief Script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 借用 GitHub 的免费 AI 额度
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # 保留备用
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 这一步是关键：把免费额度传给你的代码
         run: python reply.py

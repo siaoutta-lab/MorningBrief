@@ -1,5 +1,4 @@
 name: MorningBrief
-
 on:
   schedule:
     # 5 22 代表世界标准时间（UTC）的 22:05
@@ -10,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -26,7 +24,7 @@ jobs:
         run: |
           python reply.py
 
-      # 【发件引擎：Gmail | 收件人：3位】
+      # 【发件引擎：Gmail | 收件人：2位】
       - name: Send MorningBrief Email
         uses: dawidd6/action-send-mail@v3
         with:
@@ -35,8 +33,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: 📊 MorningBrief | SEA Edition (Latest)
-          # 已完美并列配置你的三个目标收件箱
-          to: caisihao@asp.th.com,siaoutta@gmail.com,267247961@qq.com
+          to: 937093287@qq.com,siaoutta@gmail.com
           from: AI News Editor <${{ secrets.MAIL_USERNAME }}>
           body: file://brief_output.txt
           convert_markdown: true

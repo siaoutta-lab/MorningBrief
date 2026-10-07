@@ -2,12 +2,16 @@ name: MorningBrief
 
 on:
   schedule:
-    - cron: '5 22 * * *' # UTC 时间 22:05，对应北京/曼谷时间早上 06:05
-  workflow_dispatch: # 支持手动触发
+    # 每天 UTC 0:00 运行（对应北京时间早上 8:00）
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许手动触发
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # 赋予 GITHUB_TOKEN 写权限，允许 Keepalive 脚本自动提交 commit
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,12 +26,12 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run script
+      - name: Run reply script
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          WX_PUSHER_APP_TOKEN: ${{ secrets.WX_PUSHER_APP_TOKEN }}
+          WX_PUSHER_UID: ${{ secrets.WX_PUSHER_UID }}
         run: python reply.py
 
-      # 自动保持 Actions 活跃，防止超过 60 天无 Commit 导致定时任务被 GitHub 停用
       - name: Keepalive Workflow
         uses: gautamkrishnar/keepalive-workflow@v2

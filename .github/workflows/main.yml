@@ -4,13 +4,13 @@ on:
   schedule:
     # 每天 UTC 0:00 运行（对应北京时间早上 8:00）
     - cron: '0 0 * * *'
-  workflow_dispatch: # 允许手动触发
+  workflow_dispatch: # 允许在 Actions 页面手动点击运行
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # 赋予 GITHUB_TOKEN 写权限，允许 Keepalive 脚本自动提交 commit
+      contents: read # 基础读取权限
 
     steps:
       - name: Checkout repository
@@ -32,6 +32,3 @@ jobs:
           WX_PUSHER_APP_TOKEN: ${{ secrets.WX_PUSHER_APP_TOKEN }}
           WX_PUSHER_UID: ${{ secrets.WX_PUSHER_UID }}
         run: python reply.py
-
-      - name: Keepalive Workflow
-        uses: gautamkrishnar/keepalive-workflow@v2
